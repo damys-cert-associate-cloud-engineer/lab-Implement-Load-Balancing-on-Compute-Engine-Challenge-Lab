@@ -1,7 +1,7 @@
 #!/bin/bash
 # Set all variables to start de script
-REGION="us-east1"
-ZONE="us-east1-c"
+REGION="europe-west4"
+ZONE="europe-west4-c"
 MACHINE_SMALL="e2-small"
 MACHINE_MEDIUM="e2-medium"
 IMAGE_FAMILY_SMALL="debian-12"
