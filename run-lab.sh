@@ -11,6 +11,7 @@ TAG="network-lb-tag"
 LB_NAME="lb-backend-template"
 LB_MIG_NAME="lb-backend-group"
 FIREWALL_HC_NAME="fw-allow-health-check"
+WWW_FIREWALL_NAME="www-firewall-network-lb"
 PORT=80
 LB_GLOBAL_STATIC_IP="lb-ipv4-1"
 HTTP_HC_NAME="http-basic-check"
@@ -39,10 +40,14 @@ for VM in web1 web2 web3; do
       echo '<h3>Web Server: $VM</h3>' > /var/www/html/index.html"
 done
 
+# Create a firewall rule to allow external traffic to the VM instances 
+gcloud compute firewall-rules create $WWW_FIREWALL_NAME   --target-tags $TAG --allow tcp:$PORT
+
 # get IPs VM to validate
 gcloud compute instances list
 
 echo usan "curl http://[IP_ADDRESS]"
+
 
 # Create an target-pool
 gcloud compute target-pools create $TARGET_POOL_NAME --region $REGION
@@ -51,7 +56,7 @@ gcloud compute target-pools create $TARGET_POOL_NAME --region $REGION
 gcloud compute addresses create $NETWORK_ADDRESS_LB_NAME --region $REGION
 
 
-
+gcloud compute http-health-checks create basic-check
 
 
 # # create a new loadbalancer 
@@ -73,6 +78,9 @@ gcloud compute instance-templates create $LB_NAME \
      echo "Page served from: $vm_hostname" | \
      tee /var/www/html/index.html
      systemctl restart apache2'
+
+
+
 
 # create an Instance group
 gcloud compute instance-groups managed create $LB_MIG_NAME --template=$LB_NAME --size=2 --zone=$ZONE
